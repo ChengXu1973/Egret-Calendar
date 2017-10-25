@@ -57,9 +57,9 @@ var Calendar = (function (_super) {
     // -------------------------------------- init --------------------------------------
     /** init ui status */
     Calendar.prototype.initUI = function () {
+        // set bgd visible
         for (var i = 0; i <= 5; i++) {
             for (var j = 0; j <= 6; j++) {
-                console.log("date_" + i + "_" + j);
                 this["date_" + i + "_" + j].getChildByName("bgd").visible = false;
             }
         }
@@ -69,6 +69,7 @@ var Calendar = (function (_super) {
     // -------------------------------------- event listener --------------------------------------
     Calendar.prototype.initListener = function () {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.handleTap, this);
+        // this.addEventListener(MouseEvent. , this.handleTap, this);
     };
     Calendar.prototype.handleTap = function (evt) {
         switch (evt.target) {
@@ -81,7 +82,9 @@ var Calendar = (function (_super) {
             default:
                 if (evt.target.name && evt.target.name.indexOf("date_") > -1) {
                     console.log("tap", evt.target.name);
-                    console.warn(this["date_" + 0 + "_" + 0]);
+                    this.groupFrame.visible = true;
+                    this.groupFrame.x = evt.target.x;
+                    this.groupFrame.y = evt.target.y + 115;
                 }
                 break;
         }

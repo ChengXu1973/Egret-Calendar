@@ -50,6 +50,7 @@ class Calendar extends eui.Component {
 
     /** init ui status */
     private initUI(): void {
+        // set bgd visible
         for (let i = 0; i <= 5; i++) {
             for (let j = 0; j <= 6; j++) {
                 (<eui.Group>this["date_" + i + "_" + j]).getChildByName("bgd").visible = false;
@@ -69,6 +70,9 @@ class Calendar extends eui.Component {
     /** container of the dates group ( date_0_0 -> date_5_6 ) */
     private groupDays: eui.Group;
 
+    /** frame style of current date */
+    private groupFrame: eui.Group;
+
     // -------------------------------------- variables --------------------------------------
 
     // -------------------------------------- properties --------------------------------------
@@ -77,6 +81,7 @@ class Calendar extends eui.Component {
 
     private initListener(): void {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.handleTap, this);
+        // this.addEventListener(MouseEvent. , this.handleTap, this);
     }
 
     private handleTap(evt: egret.TouchEvent): void {
@@ -90,6 +95,9 @@ class Calendar extends eui.Component {
             default:
                 if (evt.target.name && (<string>evt.target.name).indexOf("date_") > -1) {
                     console.log("tap", evt.target.name);
+                    this.groupFrame.visible = true;
+                    this.groupFrame.x = evt.target.x;
+                    this.groupFrame.y = evt.target.y + 115;
                 }
                 break;
         }
