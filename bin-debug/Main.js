@@ -44,7 +44,7 @@ var Main = (function (_super) {
     };
     Main.prototype.createScene = function () {
         var calendar = new Calendar();
-        calendar.setPosition(50, 100, 700);
+        calendar.setPosition(50, 100, 1000);
         this.stage.addChild(calendar);
     };
     return Main;

@@ -30,7 +30,7 @@ class Main extends eui.UILayer {
 
     private createScene() {
         let calendar = new Calendar();
-        calendar.setPosition(50,100,700);
+        calendar.setPosition(50,100,1000);
         this.stage.addChild(calendar);
     }
 

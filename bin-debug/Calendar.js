@@ -16,11 +16,15 @@ var Calendar = (function (_super) {
     function Calendar() {
         var _this = _super.call(this) || this;
         _this.skinName = "/resource/game-skin/CalendarSkin.exml";
+        _this.addEventListener(egret.Event.COMPLETE, _this.uiComplete, _this);
         return _this;
     }
-    Calendar.prototype.childrenCreated = function () {
-        _super.prototype.childrenCreated.call(this);
+    Calendar.prototype.uiComplete = function () {
+        this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.uiComplete, this);
+        this.initUI();
+        this.initListener();
     };
+    /** get an instance of the calendar component */
     Calendar.getInstance = function () {
         if (!this.instance) {
             this.instance = new Calendar();
@@ -32,7 +36,7 @@ var Calendar = (function (_super) {
     Calendar.prototype.getSelectedDate = function () {
         return 0;
     };
-    /** set the position & size of the calendar
+    /** set the position & size ( width ) of the calendar
      * @param x {number} x of the calendar
      * @param y {number} y of the calendar
      * @param y {number} width of the calendar (>=600)
@@ -53,6 +57,52 @@ var Calendar = (function (_super) {
     // -------------------------------------- init --------------------------------------
     /** init ui status */
     Calendar.prototype.initUI = function () {
+        for (var i = 0; i <= 5; i++) {
+            for (var j = 0; j <= 6; j++) {
+                console.log("date_" + i + "_" + j);
+                this["date_" + i + "_" + j].getChildByName("bgd").visible = false;
+            }
+        }
+    };
+    // -------------------------------------- variables --------------------------------------
+    // -------------------------------------- properties --------------------------------------
+    // -------------------------------------- event listener --------------------------------------
+    Calendar.prototype.initListener = function () {
+        this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.handleTap, this);
+    };
+    Calendar.prototype.handleTap = function (evt) {
+        switch (evt.target) {
+            case this.btnCurrentTime:
+                break;
+            case this.btnNext:
+                break;
+            case this.btnPrevious:
+                break;
+            default:
+                if (evt.target.name && evt.target.name.indexOf("date_") > -1) {
+                    console.log("tap", evt.target.name);
+                    console.warn(this["date_" + 0 + "_" + 0]);
+                }
+                break;
+        }
+    };
+    // -------------------------------------- handle ui --------------------------------------
+    // -------------------------------------- util --------------------------------------
+    /** get a string of length 2
+     * @param num {number} integer from 0 to 99
+     * @return {string} string of length 2
+     */
+    Calendar.prototype.getStrOfLen2 = function (num) {
+        return ((num | 0) / 100).toFixed(2).slice(2);
+    };
+    /** whether the input year is a leap year
+     * @param year {number} integer
+     */
+    Calendar.prototype.isLeapYear = function (year) {
+        return !(year % (year % 100 ? 4 : 400));
+    };
+    // -------------------------------------- dispose --------------------------------------
+    Calendar.prototype.dispose = function () {
     };
     return Calendar;
 }(eui.Component));
