@@ -81,7 +81,8 @@ class Calendar extends eui.Component {
 
     private initListener(): void {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.handleTap, this);
-        // this.addEventListener(MouseEvent. , this.handleTap, this);
+        this.addEventListener(mouse.MouseEvent.MOUSE_OVER, this.handleMouse, this);
+        this.addEventListener(mouse.MouseEvent.MOUSE_OUT, this.handleMouse, this);
     }
 
     private handleTap(evt: egret.TouchEvent): void {
@@ -100,6 +101,12 @@ class Calendar extends eui.Component {
                     this.groupFrame.y = evt.target.y + 115;
                 }
                 break;
+        }
+    }
+
+    private handleMouse(evt: egret.TouchEvent): void {
+        if (evt.target.name && (<string>evt.target.name).indexOf("date_") > -1) {
+            (<eui.Group>evt.target).getChildByName("bgd").visible = evt.type == mouse.MouseEvent.MOUSE_OVER;
         }
     }
 

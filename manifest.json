@@ -5,7 +5,8 @@
 		"libs/modules/res/res.js",
 		"libs/modules/eui/eui.js",
 		"libs/modules/tween/tween.js",
-		"promise/bin/promise.js"
+		"promise/bin/promise.js",
+		"libs/modules/mouse/mouse.js"
 	],
 	"game": [
 		"bin-debug/AssetAdapter.js",

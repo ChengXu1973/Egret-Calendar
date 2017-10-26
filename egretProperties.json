@@ -34,6 +34,10 @@
     {
       "name": "promise",
       "path": "./promise"
+    },
+    {
+    "name": "mouse",
+    "path": "../libsrc"
     }
   ]
 }

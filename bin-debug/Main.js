@@ -43,6 +43,7 @@ var Main = (function (_super) {
         theme.addEventListener(eui.UIEvent.COMPLETE, this.createScene, this);
     };
     Main.prototype.createScene = function () {
+        mouse.enable(this.stage);
         var calendar = new Calendar();
         calendar.setPosition(50, 100, 1000);
         this.stage.addChild(calendar);

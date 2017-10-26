@@ -69,7 +69,8 @@ var Calendar = (function (_super) {
     // -------------------------------------- event listener --------------------------------------
     Calendar.prototype.initListener = function () {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.handleTap, this);
-        // this.addEventListener(MouseEvent. , this.handleTap, this);
+        this.addEventListener(mouse.MouseEvent.MOUSE_OVER, this.handleMouse, this);
+        this.addEventListener(mouse.MouseEvent.MOUSE_OUT, this.handleMouse, this);
     };
     Calendar.prototype.handleTap = function (evt) {
         switch (evt.target) {
@@ -87,6 +88,11 @@ var Calendar = (function (_super) {
                     this.groupFrame.y = evt.target.y + 115;
                 }
                 break;
+        }
+    };
+    Calendar.prototype.handleMouse = function (evt) {
+        if (evt.target.name && evt.target.name.indexOf("date_") > -1) {
+            evt.target.getChildByName("bgd").visible = evt.type == mouse.MouseEvent.MOUSE_OVER;
         }
     };
     // -------------------------------------- handle ui --------------------------------------
