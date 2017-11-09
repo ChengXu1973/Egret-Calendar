@@ -23,6 +23,7 @@ var Calendar = (function (_super) {
         this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.uiComplete, this);
         this.initUI();
         this.initListener();
+        this.initSetting();
     };
     /** get an instance of the calendar component */
     Calendar.getInstance = function () {
@@ -63,9 +64,27 @@ var Calendar = (function (_super) {
                 this["date_" + i + "_" + j].getChildByName("bgd").visible = false;
             }
         }
+        // set frame visible
+        this.groupFrame.visible = false;
+        this.bgdToday.visible = false;
     };
-    // -------------------------------------- variables --------------------------------------
-    // -------------------------------------- properties --------------------------------------
+    Calendar.prototype.initSetting = function () {
+        this.currentYear = new Date().getFullYear();
+        this.currentMonth = new Date().getMonth();
+        this.currentDay = new Date().getDate();
+        this.shownYear = this.currentYear;
+        this.shownMonth = this.currentMonth;
+    };
+    Object.defineProperty(Calendar.prototype, "shownMonth", {
+        get: function () { return this._shownMonth; },
+        set: function (v) {
+            v = (v + 12) % 12;
+            this._shownMonth = v;
+            this.setCalendar();
+        },
+        enumerable: true,
+        configurable: true
+    });
     // -------------------------------------- event listener --------------------------------------
     Calendar.prototype.initListener = function () {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.handleTap, this);
@@ -77,26 +96,121 @@ var Calendar = (function (_super) {
             case this.btnCurrentTime:
                 break;
             case this.btnNext:
+                this.goNextMonth();
                 break;
             case this.btnPrevious:
+                this.goPreviousMonth();
                 break;
             default:
                 if (evt.target.name && evt.target.name.indexOf("date_") > -1) {
-                    console.log("tap", evt.target.name);
                     this.groupFrame.visible = true;
                     this.groupFrame.x = evt.target.x;
                     this.groupFrame.y = evt.target.y + 115;
+                    this.selectedDate = this.getTimeByName(evt.target.name);
+                    var month = new Date(this.selectedDate).getMonth();
+                    if (this.shownMonth == 0 && month == 11) {
+                        this.goPreviousMonth();
+                        return;
+                    }
+                    if (this.shownMonth == 11 && month == 0) {
+                        this.goNextMonth();
+                        return;
+                    }
+                    if (this.shownMonth > month) {
+                        this.goPreviousMonth();
+                        return;
+                    }
+                    if (this.shownMonth < month) {
+                        this.goNextMonth();
+                        return;
+                    }
                 }
                 break;
         }
     };
+    Calendar.prototype.goNextMonth = function () {
+        if (this.shownMonth == 11) {
+            this.shownYear++;
+        }
+        this.shownMonth = this.shownMonth + 1;
+    };
+    Calendar.prototype.goPreviousMonth = function () {
+        if (this.shownMonth == 0) {
+            this.shownYear--;
+        }
+        this.shownMonth = this.shownMonth - 1;
+    };
     Calendar.prototype.handleMouse = function (evt) {
-        if (evt.target.name && evt.target.name.indexOf("date_") > -1) {
-            evt.target.getChildByName("bgd").visible = evt.type == mouse.MouseEvent.MOUSE_OVER;
+        var name = evt.target.name;
+        if (name && name.indexOf("date_") > -1) {
+            var bgd = evt.target.getChildByName("bgd");
+            bgd.visible = evt.type == mouse.MouseEvent.MOUSE_OVER;
         }
     };
     // -------------------------------------- handle ui --------------------------------------
+    /** set text and style of each date */
+    Calendar.prototype.setCalendar = function () {
+        this.groupFrame.visible = false;
+        this.bgdToday.visible = false;
+        var currentMonthDay;
+        var lastMonthDay;
+        currentMonthDay = [1, 3, 5, 7, 8, 10, 12].indexOf(this.shownMonth + 1) > -1 ? 31 : 30;
+        lastMonthDay = [1, 3, 5, 7, 8, 10, 12].indexOf((this.shownMonth - 1) % 12 + 1) > -1 ? 31 : 30;
+        // lastMonthDay = [1, 3, 5, 7, 8, 10, 12].indexOf((this.shownMonth + 12 - 1) % 12 + 1) > -1 ? 31 : 30;
+        if (this.shownMonth == 1) {
+            currentMonthDay = this.isLeapYear(this.shownYear) ? 29 : 28;
+        }
+        if (this.shownMonth == 2) {
+            lastMonthDay = this.isLeapYear(this.shownYear) ? 29 : 28;
+        }
+        var fixNum = new Date(this.shownYear, this.shownMonth, 1).getDay();
+        fixNum = fixNum == 0 ? 7 : fixNum;
+        for (var x = 0; x < 6; x++) {
+            for (var y = 0; y < 7; y++) {
+                var group = this["date_" + x + "_" + y];
+                var txt = group.getChildByName("txt");
+                var date = (x * 7 + y + 1) - (fixNum - 1);
+                txt.textColor = 0xffffff;
+                if (date <= 0) {
+                    date = date + lastMonthDay;
+                    txt.textColor = 0xaaaaaa;
+                }
+                else if (date > currentMonthDay) {
+                    date = date - currentMonthDay;
+                    txt.textColor = 0xaaaaaa;
+                }
+                txt.text = date + "";
+                var time = this.getTimeByName("date_" + x + "_" + y);
+                if (this.selectedDate == time) {
+                    this.groupFrame.visible = true;
+                    this.groupFrame.x = group.x;
+                    this.groupFrame.y = group.y + 115;
+                }
+                var today = new Date(this.currentYear, this.currentMonth, this.currentDay).getTime();
+                if (today == time) {
+                    this.bgdToday.visible = true;
+                    this.bgdToday.x = group.x;
+                    this.bgdToday.y = group.y + 115;
+                }
+            }
+        }
+        this.btnCurrentTime.label = this.shownYear + "/" + this.getStrOfLen2(this.shownMonth + 1);
+    };
     // -------------------------------------- util --------------------------------------
+    /** get timestamp by target.name ( hour=0, min=0, sec=0 )
+     * @return {number}
+     */
+    Calendar.prototype.getTimeByName = function (name) {
+        var numStr = name.split("_");
+        var x = +numStr[1];
+        var y = +numStr[2];
+        var num = x * 7 + y + 1;
+        var nowTime = new Date(this.shownYear, this.shownMonth, 1).getTime();
+        var fixNum = new Date(this.shownYear, this.shownMonth, 1).getDay();
+        fixNum = fixNum == 0 ? 7 : fixNum;
+        var distance = num - (fixNum - 1);
+        return nowTime + 1000 * 60 * 60 * 24 * (distance - 1);
+    };
     /** get a string of length 2
      * @param num {number} integer from 0 to 99
      * @return {string} string of length 2

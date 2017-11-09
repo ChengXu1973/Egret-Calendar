@@ -29,6 +29,9 @@
 
 	</e:Group>
 	<e:Group id="groupMonth" height="805" y="115" left="20" right="20">
+		<e:Group id="bgdToday" width="130" height="115" y="0" x="0" touchEnabled="false" touchChildren="false" touchThrough="true">
+			<e:Rect width="120" height="105" fillColor="0xDDDDDD" horizontalCenter="0" verticalCenter="0" alpha="0.1" touchEnabled="false" name="bgd" x="395" y="350" scaleX="1" scaleY="1"/>
+		</e:Group>
 		<e:Group id="groupFrame" width="130" height="115" y="0" x="0" touchEnabled="false" touchChildren="false" touchThrough="true" visible="false">
 			<e:Rect width="130" height="5" fillColor="0xDDDDDD" alpha="0.5" touchEnabled="false" x="0" scaleX="1" scaleY="1" top="0"/>
 			<e:Rect width="130" height="5" fillColor="0xDDDDDD" alpha="0.5" touchEnabled="false" scaleX="1" scaleY="1" bottom="0" x="0"/>
