@@ -35,7 +35,7 @@ var Calendar = (function (_super) {
     // -------------------------------------- application interface --------------------------------------
     /** get the javascript timestamp of selected date */
     Calendar.prototype.getSelectedDate = function () {
-        return 0;
+        return this.selectedDate || Date.now();
     };
     /** set the position & size ( width ) of the calendar
      * @param x {number} x of the calendar

@@ -27,7 +27,7 @@ class Calendar extends eui.Component {
 
     /** get the javascript timestamp of selected date */
     public getSelectedDate(): number {
-        return 0;
+        return this.selectedDate || Date.now();
     }
 
     /** set the position & size ( width ) of the calendar
